@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
-import { createApp } from './app.js'
+import { createApp } from './create-app.js'
 import { getEnv } from './config/env.js'
 import { logger } from './lib/logger.js'
 

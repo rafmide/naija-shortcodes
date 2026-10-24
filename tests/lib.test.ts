@@ -58,7 +58,7 @@ describe('env', () => {
   it('applies defaults and treats empty strings as unset', () => {
     const env = parseEnv({ SITE_URL: '' })
     expect(env.PORT).toBe(3000)
-    expect(env.SITE_URL).toBe('http://localhost:3000')
+    expect(env.SITE_URL).toBe('https://naija-shortcodes.vercel.app')
   })
   it('fails loudly on a malformed value', () => {
     expect(() => parseEnv({ SITE_URL: 'not a url' })).toThrow(/Invalid environment/)

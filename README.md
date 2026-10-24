@@ -2,7 +2,7 @@
 
 A fast, honest directory of USSD codes for Nigerian banks, fintechs, mobile networks and government services. Every code shows its sources, how trustworthy those sources are, and when it was last checked.
 
-Built with **Hono + TypeScript + HTMX + GSAP + plain CSS**. No frontend framework, no database, no build step for the browser code.
+Built with **Hono + TypeScript + HTMX + GSAP + plain CSS**. No frontend framework, no database, no browser build step.
 
 ## Quick start
 
@@ -14,6 +14,7 @@ pnpm dev             # http://localhost:3000
 | Script                 | What it does                                                 |
 | ---------------------- | ------------------------------------------------------------ |
 | `pnpm dev`             | Local server with reload. Serves `public/` itself.           |
+| `pnpm build`           | Compiles `src/` to `dist/` for the Vercel function.          |
 | `pnpm check`           | Typecheck, lint, format check, data validation, tests.       |
 | `pnpm test`            | Vitest (unit, data, and HTTP-contract tests).                |
 | `pnpm validate:data`   | Schema check on the directory. Runs in CI and pre-commit.    |
@@ -26,7 +27,7 @@ pnpm dev             # http://localhost:3000
 src/
   index.ts            Vercel entrypoint (default-exported Hono app)
   dev.ts              Local server (adds serveStatic, which Vercel ignores)
-  app.tsx             App factory: middleware order, routes, 404/500
+  create-app.tsx      App factory: middleware order, routes, 404/500
   config/             Zod-validated env, site constants
   data/               schema.ts (Zod) and providers.ts (the directory itself)
   lib/                search ranking, dial helpers, staleness
@@ -76,10 +77,10 @@ Motion follows Emil Kowalski's published rules, encoded as tokens in `public/css
 
 ## Deploy to Vercel
 
-1. Push to GitHub and import the repo. Vercel detects Hono and needs no build command.
+1. Push to GitHub and import the repo. Vercel detects Hono and runs `pnpm build`, which compiles `src/` to `dist/`.
 2. Set the `SITE_URL` environment variable.
 
-Vercel serves `public/` from its CDN and ignores Hono's `serveStatic`, so `src/index.ts` deliberately omits it. All relative imports use explicit `.js` extensions (`module: NodeNext`) to avoid the `ERR_MODULE_NOT_FOUND` crash reported against Vercel's Hono builder (vercel/vercel#14910).
+`vercel.json` sets `outputDirectory: "dist"`, so the Hono builder uses the compiled `dist/index.js` and its `.js` imports instead of compiling the multi-file TSX source itself. This avoids the `ERR_MODULE_NOT_FOUND` crash reported against Vercel's Hono builder (vercel/vercel#14910). Vercel still serves `public/` from its CDN and ignores `serveStatic`, so `src/index.ts` deliberately omits it.
 
 ## Known gaps
 
